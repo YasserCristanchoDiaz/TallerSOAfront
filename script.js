@@ -1,13 +1,14 @@
-const inputText=document.getElementById("input-text").value;
 const url = 'http://localhost:7879'
 
+//Leer Texto
 function readText() {
+    const inputText=document.getElementById("input-text").value;
     fetch(url+'/read/'+inputText)
         .then(response => {
             if (!response.ok) {
                 throw new Error("Error al leer el texto")
             }
-            return response.json();
+            return response.text();
         })
         .then(result => displayResultRead(result))
         .catch(error => console.error("Error al leer el texto", error))
@@ -20,10 +21,9 @@ function displayResultRead(result) {
     resultDiv.innerHTML="";
 
     if(result){
-        let text = Object.values(result)
-        console.log(text)
+        console.log(result)
         resultDiv.innerHTML+='<p>Texto:<p>';
-        resultDiv.innerHTML+='<p>'+ text + '<p>';
+        resultDiv.innerHTML+=`<p>${result.replace(/"/g, "")}<p>`;
     } else {
         resultDiv.innerHTML += '<p>No se encontro texto</p>';
     }
@@ -31,8 +31,10 @@ function displayResultRead(result) {
     resultContainer.style.display = 'block';
 }
 
+//Contar palabras
 function countWords(){
-    fetch('http://localhost:7879/wordCount/'+inputText)
+    const inputText=document.getElementById("input-text").value;
+    fetch(url+'/wordCount/'+inputText)
         .then(response =>{
             if(!response.ok){
                 throw new Error("Error al contar las palabras");
@@ -61,4 +63,20 @@ function displayResult(result){
     }
 
     resultContainer.style.display = 'block';    
+}
+
+//Normalizar
+document.getElementById('btn-normalize').addEventListener('click', normalize)
+function normalize() {
+    console.log("Normalize")
+    const inputText=document.getElementById("input-text").value;
+    fetch(url+'/normalize/'+inputText)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Error al normalizar el texto")
+            }
+            return response.text()
+        })
+        .then(result => displayResultRead(result))
+        .catch(error => console.error("Error al normalizar el texto", error))
 }
